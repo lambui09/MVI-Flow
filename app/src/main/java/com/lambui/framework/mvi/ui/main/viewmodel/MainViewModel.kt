@@ -9,9 +9,9 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collect as collect1
 
 @ExperimentalCoroutinesApi
 class MainViewModel(
@@ -29,9 +29,10 @@ class MainViewModel(
 
     private fun handleIntent() {
         viewModelScope.launch {
-            userIntent.consumeAsFlow().collect {
+            userIntent.consumeAsFlow().collect1 {
                 when (it) {
                     is MainIntent.FetchUser -> fetchUser()
+                    is MainIntent.FetchWord -> getVocabulary()
                 }
             }
         }
@@ -44,6 +45,17 @@ class MainViewModel(
                 MainState.Users(repository.getUsers())
             } catch (e: Exception) {
                 MainState.Error(e.localizedMessage)
+            }
+        }
+    }
+
+    private fun getVocabulary() {
+        viewModelScope.launch {
+            _state.value = MainState.Loading
+            _state.value = try {
+                MainState.Languages(repository.getVocabulary())
+            } catch (ex: java.lang.Exception) {
+                MainState.Error(ex.localizedMessage)
             }
         }
     }

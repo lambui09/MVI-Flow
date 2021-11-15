@@ -11,6 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.lambui.framework.mvi.R
 import com.lambui.framework.mvi.data.api.ApiHelperImpl
 import com.lambui.framework.mvi.data.api.RetrofitBuilder
+import com.lambui.framework.mvi.data.local.database.dao.CategoryImpl
+import com.lambui.framework.mvi.data.model.Category
 import com.lambui.framework.mvi.data.model.User
 import com.lambui.framework.mvi.util.ViewModelFactory
 import com.lambui.framework.mvi.ui.main.adapter.MainAdapter
@@ -28,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mainViewModel: MainViewModel
     private var adapter = MainAdapter(arrayListOf())
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupClicks() {
         buttonFetchUser.setOnClickListener {
             lifecycleScope.launch {
-                mainViewModel.userIntent.send(MainIntent.FetchUser)
+                mainViewModel.userIntent.send(MainIntent.FetchWord)
             }
         }
     }
@@ -66,7 +69,8 @@ class MainActivity : AppCompatActivity() {
             ViewModelFactory(
                 ApiHelperImpl(
                     RetrofitBuilder.apiService
-                )
+                ),
+                cate
             )
         ).get(MainViewModel::class.java)
     }
@@ -83,10 +87,10 @@ class MainActivity : AppCompatActivity() {
                         progressBar.visibility = View.VISIBLE
                     }
 
-                    is MainState.Users -> {
+                    is MainState.Languages -> {
                         progressBar.visibility = View.GONE
                         buttonFetchUser.visibility = View.GONE
-                        renderList(it.user)
+                        renderList(it.listVocabulary)
                     }
                     is MainState.Error -> {
                         progressBar.visibility = View.GONE
@@ -98,7 +102,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun renderList(users: List<User>) {
+    private fun renderList(users: List<Category>) {
         recyclerView.visibility = View.VISIBLE
         users.let { listOfUsers -> listOfUsers.let { adapter.addData(it) } }
         adapter.notifyDataSetChanged()

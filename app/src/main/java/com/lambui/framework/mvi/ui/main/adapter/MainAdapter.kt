@@ -6,20 +6,21 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.lambui.framework.mvi.R
+import com.lambui.framework.mvi.data.model.Category
 import com.lambui.framework.mvi.data.model.User
 import kotlinx.android.synthetic.main.item_layout.view.*
 
 class MainAdapter(
-    private val users: ArrayList<User>
+    private val users: ArrayList<Category>
 ) : RecyclerView.Adapter<MainAdapter.DataViewHolder>() {
 
     class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(user: User) {
-            itemView.textViewUserName.text = user.name
-            itemView.textViewUserEmail.text = user.email
-            Glide.with(itemView.imageViewAvatar.context)
-                .load(user.avatar)
-                .into(itemView.imageViewAvatar)
+        fun bind(user: Category) {
+            itemView.textViewUserName.text = user.word
+            itemView.textViewUserEmail.text = user.meaning
+//            Glide.with(itemView.imageViewAvatar.context)
+//                .load(user.)
+//                .into(itemView.imageViewAvatar)
         }
     }
 
@@ -36,7 +37,7 @@ class MainAdapter(
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) =
         holder.bind(users[position])
 
-    fun addData(list: List<User>) {
+    fun addData(list: List<Category>) {
         users.addAll(list)
     }
 
